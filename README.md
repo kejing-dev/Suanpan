@@ -13,6 +13,9 @@ pico-cli app launch io.embodit.suanpan
 adb shell monkey -p io.embodit.suanpan -c android.intent.category.LAUNCHER 1
 ```
 
+Release 里另有 `Suanpan-v0.1.2.apk`：`assembleRelease` 出的**未签名**上架包，交给应用平台注入托管证书，不能直接 `adb install`。工程里不配 release keystore。
+The Release also has `Suanpan-v0.1.2.apk`, an **unsigned** `assembleRelease` build for the store to sign; it cannot be installed with `adb` as is. The project ships no release keystore.
+
 [中文](#中文) · [English](#english)
 
 ---
