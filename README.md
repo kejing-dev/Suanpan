@@ -2,19 +2,20 @@
 
 ![算盘课 Suanpan](docs/poster.jpg)
 
-> **模拟器 QA 通过，真机未验证（Simulator-QA passed; not yet verified on a real headset）**
+> **模拟器 QA 通过，2026-11-16 用户在头显上看过放行（Emulator QA passed; checked on a headset by the user on 2026-11-16）**
 
-**装到头显 / Install on a headset**（PICO OS 6，开发者模式，USB 连电脑）：从 [Release v0.1.2](https://github.com/kejing-dev/Suanpan/releases/tag/v0.1.2) 下载 `suanpan-abacus-v0.1.2-debug.apk`，然后：
+**装到头显 / Install on a headset**（PICO OS 6，开发者模式，USB 连电脑）：本仓库自己出一个 debug 包再装 / build a debug APK from this repo, then install it:
 
 ```bash
-adb install -r suanpan-abacus-v0.1.2-debug.apk
+./gradlew assembleDebug
+adb install -r app/build/outputs/apk/debug/app-debug.apk
 pico-cli app launch io.embodit.suanpan
 # 没有 pico-cli 时 / without pico-cli:
 adb shell monkey -p io.embodit.suanpan -c android.intent.category.LAUNCHER 1
 ```
 
-Release 里另有 `Suanpan-v0.1.2.apk`：`assembleRelease` 出的**未签名**上架包，交给应用平台注入托管证书，不能直接 `adb install`。工程里不配 release keystore。
-The Release also has `Suanpan-v0.1.2.apk`, an **unsigned** `assembleRelease` build for the store to sign; it cannot be installed with `adb` as is. The project ships no release keystore.
+[Release v0.1.2](https://github.com/kejing-dev/Suanpan/releases/tag/v0.1.2) 里的 `Suanpan-v0.1.2.apk` 是 `assembleRelease` 出的**未签名**上架包，交给应用平台注入托管证书，不能直接 `adb install`；Release 不放签了名的包。工程里不配 release keystore。
+`Suanpan-v0.1.2.apk` in [Release v0.1.2](https://github.com/kejing-dev/Suanpan/releases/tag/v0.1.2) is an **unsigned** `assembleRelease` build for the store to sign; it cannot be installed with `adb` as is, and the Release carries no signed APK. The project ships no release keystore.
 
 [中文](#中文) · [English](#english)
 
@@ -48,7 +49,7 @@ PICO 空间应用（PICO OS 6 · Spatial SDK 6.1.9 · Shared Space 体积窗口 
 | ![对啦](docs/shot-04-correct.jpg) 拨对了：对啦 = 42 | ![练](docs/shot-05-practice.jpg) 练：两位数加减，题目无限 |
 | ![自由拨](docs/shot-06-free.jpg) 自由拨：读数 4,072 + 每档位名 | ![过关](docs/shot-07-lesson-passed.jpg) 一课过关 |
 
-演示视频（Release 资产 `Suanpan-v0.1.0-demo.mp4`，45 s，无声）是 **v0.1.0 录的旧版**（那时还没有数字键，拨珠是直接点珠子），同样是原生模拟器 + 调试输入驱动，非真实手势录像。
+演示视频（Release 资产 `Suanpan-v0.1.2-demo.mp4`，54 s，无声，中文界面）：v0.1.2 在原生模拟器上录屏，调试广播驱动，**非真实手势录像**。
 
 ### 已知问题
 
@@ -57,11 +58,12 @@ PICO 空间应用（PICO OS 6 · Spatial SDK 6.1.9 · Shared Space 体积窗口 
 3. 从左右 30° 斜着看时，档的可点目标只有约 1.54°（正面默认位置 ≥ 2.09°）。
 4. 模拟器冷启动约 7.6 s 才出窗口；在模拟器上点得慢时会误进「卡住了」提示。
 5. 截图非高清。
-6. **真机未验证**：头显上的点按命中率、眼手 / 手柄手感、声音都还没在真机上看过。
+6. 真机：用户 2026-11-16 在头显上看过 v0.1.2 后放行发布；点按命中率、手感没有逐项量化记录。
 
 ### 版本
 
-- **v0.1.1**：拨珠改成两段式（点档 → 上档直接翻、下档用 0–4 数字键选几颗靠梁），整把算盘放大 1.5 倍，可点目标在默认位置都 ≥ 2°、间隙 ≥ 2.2 cm（QA 第 1 轮打回的点珠太小问题）；题目条英文不再缩字溢出、练页选项对比度提高。QA 第 2 轮模拟器复查通过。
+- **v0.1.2**：功能同 v0.1.1，只重出包（versionCode 3）；用户 2026-11-16 头显上看过放行。
+- v0.1.1：拨珠改成两段式（点档 → 上档直接翻、下档用 0–4 数字键选几颗靠梁），整把算盘放大 1.5 倍，可点目标在默认位置都 ≥ 2°、间隙 ≥ 2.2 cm（QA 第 1 轮打回的点珠太小问题）；题目条英文不再缩字溢出、练页选项对比度提高。QA 第 2 轮模拟器复查通过。
 - v0.1.0：首个版本（模拟器 QA 第 1 轮打回）。
 
 ### 构建
@@ -99,7 +101,7 @@ PICO spatial app (PICO OS 6 · Spatial SDK 6.1.9 · Shared Space volume + contro
 
 ### Screenshots
 
-See the gallery above. They were taken on the native PICO emulator 6.1 (v0.1.1, not HD, Chinese UI) driven by debug broadcasts: **not a recording of real hand gestures**. The demo video in the Release (`Suanpan-v0.1.0-demo.mp4`) is from **v0.1.0**, before the 0–4 key row.
+See the gallery above. They were taken on the native PICO emulator 6.1 (v0.1.1, not HD, Chinese UI) driven by debug broadcasts: **not a recording of real hand gestures**. The demo video in the Release (`Suanpan-v0.1.2-demo.mp4`, 54 s, Chinese UI) was recorded from v0.1.2 on the emulator, driven by debug broadcasts: not real hand gestures.
 
 ### Known issues
 
@@ -108,11 +110,12 @@ See the gallery above. They were taken on the native PICO emulator 6.1 (v0.1.1, 
 3. Seen 30° from the side, a rod target is only about 1.54° (≥ 2.09° from the default front position).
 4. Emulator cold start takes about 7.6 s; slow taps on the emulator can trigger the "stuck?" hint.
 5. Screenshots are not HD.
-6. **Not yet verified on a real headset**: hit rate, eye-hand / controller feel and sound are unchecked on device.
+6. On device: the user checked v0.1.2 on a headset on 2026-11-16 and approved the release; hit rate and feel were not measured item by item.
 
 ### Versions
 
-- **v0.1.1**: two-step bead input (tap a rod; the lower deck uses a 0–4 key row), abacus scaled ×1.5 so every target is ≥ 2° with ≥ 2.2 cm gaps at the default position; English problem strip and practice-tab contrast fixed. Passed QA round 2 on the emulator.
+- **v0.1.2**: same as v0.1.1, rebuilt package only (versionCode 3); checked on a headset by the user on 2026-11-16.
+- v0.1.1: two-step bead input (tap a rod; the lower deck uses a 0–4 key row), abacus scaled ×1.5 so every target is ≥ 2° with ≥ 2.2 cm gaps at the default position; English problem strip and practice-tab contrast fixed. Passed QA round 2 on the emulator.
 - v0.1.0: first build (sent back by QA round 1).
 
 ### Build
